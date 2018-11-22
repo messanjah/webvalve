@@ -8,8 +8,7 @@ module WebValve
     end
 
     def should_intercept?
-      WebValve.env.test? || # always intercept in test
-        (WebValve.enabled? && !service_enabled_in_env?)
+      WebValve.enabled? && service_disabled?
     end
 
     def service_url
@@ -34,6 +33,14 @@ module WebValve
 
     def strip_basic_auth(url)
       url.to_s.sub(%r(\Ahttp(s)?://[^@/]+@), 'http\1://')
+    end
+
+    def service_disabled?
+      if WebValve.allow_service_connect?
+        !service_enabled_in_env?
+      else
+        true
+      end
     end
 
     def service_enabled_in_env?

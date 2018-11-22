@@ -21,4 +21,12 @@ module Helpers
   ensure
     WebValve.env = initial_env
   end
+
+  def with_allow_service_connect(value)
+    initial_value = WebValve.allow_service_connect
+    WebValve.allow_service_connect = value
+    yield
+  ensure
+    WebValve.allow_service_connect = initial_value
+  end
 end

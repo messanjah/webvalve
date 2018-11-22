@@ -140,11 +140,24 @@ You will have to restart your application after making this change
 because service faking is an initialization time concern and not a
 runtime concern.
 
+This option is ignored in the test environment by default, since you
+rarely want to make requests in tests. If you really want to be able to
+hit a real service in test (like an integration CI suite), set this
+option in `config/webvalve.rb`:
+```ruby
+# config/webvalve.rb
+WebValve.allow_service_connect = true
+```
+
+With this set to true, WebValve will still block connections by
+default, but allow connections to services that are enabled via
+environment variable.
+
 ## Configuring fakes in tests
 
 In order to get WebValve fake services working properly in tests, you
 have to configure WebValve at the beginning of each test. For RSpec, there
-is a configuration provided. 
+is a configuration provided.
 
 ```ruby
 # spec/spec_helper.rb
@@ -195,8 +208,8 @@ WebValve.register FakeBank, url: "https://some-service.com"
 ## What's in a `FakeService`?
 
 The definition of `FakeService` is really simple. It's just a
-`Sinatra::Base` class. It is wired up to support returning JSON 
-responses and it will raise when a route is requested but it is 
+`Sinatra::Base` class. It is wired up to support returning JSON
+responses and it will raise when a route is requested but it is
 not registered.
 
 ## Frequently Asked Questions

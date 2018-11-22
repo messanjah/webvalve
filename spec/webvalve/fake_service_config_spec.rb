@@ -40,6 +40,30 @@ RSpec.describe WebValve::FakeServiceConfig do
           expect(subject.should_intercept?).to eq true
         end
       end
+
+      context 'when WebValve is configured to allow services to connect in test' do
+        around do |ex|
+          with_allow_service_connect(true) do
+            ex.run
+          end
+        end
+
+        it 'returns true when DUMMY_ENABLED is unset' do
+          expect(subject.should_intercept?).to eq true
+        end
+
+        it 'returns false when DUMMY_ENABLED is truthy' do
+          with_env 'DUMMY_ENABLED' => '1' do
+            expect(subject.should_intercept?).to eq false
+          end
+        end
+
+         it 'returns true when DUMMY_ENABLED is not truthy' do
+          with_env 'DUMMY_ENABLED' => '0' do
+            expect(subject.should_intercept?).to eq true
+          end
+        end
+      end
     end
 
     context 'in development env' do

@@ -17,6 +17,7 @@ module WebValve
     #   @see WebValve::Manager#reset
     delegate :setup, :register, :whitelist_url, :reset, to: :manager
     attr_writer :logger
+    attr_accessor :allow_service_connect
 
     def enabled?
       if env.in?(ALWAYS_ENABLED_ENVS)
@@ -30,6 +31,12 @@ module WebValve
       else
         ENABLED_VALUES.include?(ENV['WEBVALVE_ENABLED'])
       end
+    end
+
+    def allow_service_connect?
+      return @allow_service_connect if !@allow_service_connect.nil?
+
+      !env.test? # always intercept in test by default.
     end
 
     def config_paths
